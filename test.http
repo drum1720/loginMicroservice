@@ -1,0 +1,23 @@
+GET http://localhost:1525
+
+###
+
+GET http://localhost:1525/ping
+
+###
+
+POST http://localhost:1525/v1/start
+Content-Type: application/json
+
+{
+  "UserId": 3455
+}
+
+###
+
+POST http://localhost:1525/v1/end
+Content-Type: application/json
+
+{
+  "UserId": 3455
+}

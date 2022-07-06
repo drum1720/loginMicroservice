@@ -16,7 +16,6 @@ type loginServer struct {
 	ctx              context.Context
 	cfg              *core.Cfg
 	dbConnectionPool *posgresql.DbConnectionPool
-	handler          http.Handler
 	restServer       *server.RestServer
 }
 
@@ -42,8 +41,13 @@ func (ls *loginServer) Init() {
 
 	ls.logger = logrus.New()
 	ls.ctx = context.Background()
-	ls.handler = handlers.NewAuthorization(ls.ctx, ls.dbConnectionPool, ls.logger)
-	ls.restServer = server.NewRestServer(ls.ctx, ls.logger, ls.cfg.GetUrl(), ls.handler)
+
+	//добавляем хендлеры, они будут добавлены в роутер
+	handlersMap := make(map[string]http.Handler)
+	handlersMap["/authorization"] = handlers.NewAuthorization(ls.ctx, ls.dbConnectionPool, ls.logger)
+
+	//создание сервера,регистрация хендлеров в роутер
+	ls.restServer = server.NewRestServer(ls.ctx, ls.logger, ls.cfg.GetUrl(), handlersMap)
 }
 
 // Run ...
@@ -52,6 +56,7 @@ func (ls *loginServer) Run() {
 		ls.logger.Errorf("can't connect to database err: %s", err.Error())
 		os.Exit(1)
 	}
+
 	ls.restServer.Run()
 	// старт сервера и назначение роутинга
 

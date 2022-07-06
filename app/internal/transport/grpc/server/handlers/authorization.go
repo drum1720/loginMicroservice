@@ -26,6 +26,5 @@ func NewAuthorization(
 }
 
 func (a Authorization) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	//TODO implement me
-	panic("implement me")
+
 }

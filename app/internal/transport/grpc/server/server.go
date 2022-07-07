@@ -2,10 +2,10 @@ package server
 
 import (
 	"context"
-	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"log"
 	"net/http"
+	"time"
 )
 
 type Server interface {
@@ -22,17 +22,14 @@ type RestServer struct {
 func NewRestServer(ctx context.Context,
 	log *logrus.Logger,
 	url string,
-	handlers map[string]http.Handler,
+	handler http.Handler,
 ) *RestServer {
-	r := mux.NewRouter()
-	r.Use()
-	for key, handler := range handlers {
-		r.Handle(key, handler)
-	}
 
 	server := &http.Server{
-		Addr:    url,
-		Handler: r,
+		Addr:         url,
+		Handler:      handler,
+		WriteTimeout: time.Second,
+		ReadTimeout:  time.Second,
 	}
 
 	return &RestServer{

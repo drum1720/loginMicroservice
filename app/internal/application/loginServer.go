@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"loginMicroservice/app/internal/core"
 	"loginMicroservice/app/internal/datasource/posgresql"
@@ -42,12 +43,10 @@ func (ls *loginServer) Init() {
 	ls.logger = logrus.New()
 	ls.ctx = context.Background()
 
-	//добавляем хендлеры, они будут добавлены в роутер
-	handlersMap := make(map[string]http.Handler)
-	handlersMap["/authorization"] = handlers.NewAuthorization(ls.ctx, ls.dbConnectionPool, ls.logger)
+	router := mux.NewRouter()
+	router.Handle("/authorization", handlers.NewAuthorization(ls.ctx, ls.dbConnectionPool, ls.logger)).Methods(http.MethodPost)
 
-	//создание сервера,регистрация хендлеров в роутер
-	ls.restServer = server.NewRestServer(ls.ctx, ls.logger, ls.cfg.GetUrl(), handlersMap)
+	ls.restServer = server.NewRestServer(ls.ctx, ls.logger, ls.cfg.GetUrl(), router)
 }
 
 // Run ...
@@ -58,9 +57,6 @@ func (ls *loginServer) Run() {
 	}
 
 	ls.restServer.Run()
-	// старт сервера и назначение роутинга
-
-	//...
 }
 
 // Stop ...

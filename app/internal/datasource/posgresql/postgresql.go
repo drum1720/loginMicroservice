@@ -9,7 +9,7 @@ import (
 )
 
 type DbConnectionPool struct {
-	dbPool *pgxpool.Pool
+	DbPool *pgxpool.Pool
 }
 
 //NewDbConnectionPool ...
@@ -23,16 +23,16 @@ func NewDbConnectionPool(dataSourceName string) (*DbConnectionPool, error) {
 	ConnectionPool.Config().MinConns = int32(configs.GetEnvAsInt("DB_MAX_OPEN_CONNECTION", 10))
 	ConnectionPool.Config().MaxConnLifetime = time.Minute * 15
 
-	return &DbConnectionPool{dbPool: ConnectionPool}, nil
+	return &DbConnectionPool{DbPool: ConnectionPool}, nil
 }
 
 func (d *DbConnectionPool) Ping(ctx context.Context) (err error) {
-	dataSourceName := configs.GetEnvDefault("DATABASE", "")
+	dataSourceName := configs.GetEnvDefault("DSN", "")
 	if dataSourceName == "" {
 		return errors.New("no DATABASE env set")
 	}
 
-	if err := d.dbPool.Ping(ctx); err != nil {
+	if err := d.DbPool.Ping(ctx); err != nil {
 		return err
 	}
 	return nil

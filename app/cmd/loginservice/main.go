@@ -9,6 +9,7 @@ func main() {
 	configs.LoadEnvConfigs()
 
 	loginServer := application.NewLoginServer()
+	loginServer.Init()
 	loginServer.Run()
 
 	//проверка на  что-то, и перезапуск, остановка

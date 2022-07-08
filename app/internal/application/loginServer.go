@@ -44,7 +44,7 @@ func (ls *loginServer) Init() {
 	ls.ctx = context.Background()
 
 	router := mux.NewRouter()
-	router.Handle("/authorization", handlers.NewAuthorization(ls.ctx, ls.dbConnectionPool, ls.logger)).Methods(http.MethodPost)
+	router.Handle("/authorization", handlers.NewRegistrationHandler(ls.ctx, ls.dbConnectionPool, ls.logger)).Methods(http.MethodPost)
 
 	ls.restServer = server.NewRestServer(ls.ctx, ls.logger, ls.cfg.GetUrl(), router)
 }

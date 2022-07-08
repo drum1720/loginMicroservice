@@ -26,7 +26,7 @@ func NewDbConnectionPool(dataSourceName string) (*DbConnectionPool, error) {
 	return &DbConnectionPool{DbPool: ConnectionPool}, nil
 }
 
-func (d *DbConnectionPool) Ping(ctx context.Context) (err error) {
+func (d *DbConnectionPool) Ping(ctx context.Context) error {
 	dataSourceName := configs.GetEnvDefault("DSN", "")
 	if dataSourceName == "" {
 		return errors.New("no DATABASE env set")

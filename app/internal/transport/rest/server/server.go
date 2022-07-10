@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"github.com/sirupsen/logrus"
-	"log"
 	"net/http"
 	"time"
 )
@@ -41,5 +40,5 @@ func NewRestServer(ctx context.Context,
 }
 
 func (rs *RestServer) Run() {
-	go log.Fatal(rs.httpServer.ListenAndServe())
+	go rs.log.Fatal(rs.httpServer.ListenAndServe())
 }

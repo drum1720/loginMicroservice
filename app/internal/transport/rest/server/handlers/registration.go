@@ -2,13 +2,12 @@ package handlers
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"io"
 	"loginMicroservice/app/internal/core"
 	"loginMicroservice/app/internal/datasource/posgresql"
-	"loginMicroservice/app/internal/transport/grpc/server/response"
+	"loginMicroservice/app/internal/transport/rest/server/request"
+	"loginMicroservice/app/internal/transport/rest/server/response"
 	"net/http"
 )
 
@@ -33,37 +32,23 @@ func NewRegistrationHandler(
 func (rh RegistrationHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var user core.User
 
-	if err := parseData(r.Body, &user); err != nil {
-		rh.log.Error(err.Error())
+	if err := request.ParseData(r.Body, &user); err != nil {
+		rh.log.WithField("err", err.Error()).Warning("parse data err")
 		http.Error(w, err.Error(), err.GetStatusCode())
 		return
 	}
 
-	if rh.db.ExistUser(rh.ctx, user) {
-		rh.log.Debugf("user not created: user %s already exists", user.User)
-		http.Error(w, fmt.Sprintf("user not created: user %s already exists", user.User), http.StatusBadRequest)
+	if ok, err := rh.db.UserExist(rh.ctx, user); err != nil || ok {
+		rh.log.WithField("error", err.Error()).Info("user not created")
+		http.Error(w, fmt.Sprintf("user not created: err: %s", err.Error()), err.GetStatusCode())
 		return
 	}
 
 	if err := rh.db.InsertUser(rh.ctx, user); err != nil {
-		rh.log.Error(err)
+		rh.log.WithField("err", err).Warning()
 		http.Error(w, err.Error(), err.GetStatusCode())
 		return
 	}
 
 	response.NewRegistrationResponse(user).Write(w)
-}
-
-func parseData(body io.ReadCloser, essence core.Validater) *response.ResponseErr {
-	buffer, err := io.ReadAll(body)
-	if err != nil {
-		return response.NewResponseErr(err, http.StatusInternalServerError)
-	}
-
-	json.Unmarshal(buffer, &essence)
-	if err = essence.Validate(); err != nil {
-		return response.NewResponseErr(err, http.StatusBadRequest)
-	}
-
-	return nil
 }

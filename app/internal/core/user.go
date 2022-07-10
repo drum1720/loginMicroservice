@@ -6,10 +6,10 @@ import (
 )
 
 type User struct {
-	UserId    int64
-	User      string `json:"user"`
-	Password  string `json:"password"`
-	LastVisit time.Time
+	UserId    int64     `json:"-"`
+	User      string    `json:"user"`
+	Password  string    `json:"password"`
+	LastVisit time.Time `json:"last_visit"`
 }
 
 // Validate ...

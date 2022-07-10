@@ -10,7 +10,7 @@ import (
 type registrationResponse struct {
 	statusCode int
 	user       core.User
-	data       time.Time
+	dataTime   time.Time
 }
 
 func NewRegistrationResponse(user core.User) *registrationResponse {

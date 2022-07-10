@@ -2,30 +2,18 @@ package configs
 
 import (
 	"github.com/joho/godotenv"
+	"github.com/pkg/errors"
 	"os"
-	"strconv"
 )
 
 func LoadEnvConfigs() {
 	_ = godotenv.Load()
 }
 
-func GetEnvDefault(key, defaultValue string) string {
+func GetEnvCfg(key string) (string, error) {
 	value := os.Getenv(key)
 	if value == "" {
-		value = defaultValue
+		return "", errors.Errorf("%s not config in .env", key)
 	}
-	return value
-}
-
-func GetEnvAsInt(key string, defaultValue int) int {
-	value := os.Getenv(key)
-	if value == "" {
-		return defaultValue
-	}
-	valueInt, err := strconv.Atoi(value)
-	if err != nil {
-		return defaultValue
-	}
-	return valueInt
+	return value, nil
 }

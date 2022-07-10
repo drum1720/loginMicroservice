@@ -13,7 +13,6 @@ type Server interface {
 
 type RestServer struct {
 	ctx        context.Context
-	url        string
 	httpServer *http.Server
 	log        *logrus.Logger
 }
@@ -23,7 +22,6 @@ func NewRestServer(ctx context.Context,
 	url string,
 	handler http.Handler,
 ) *RestServer {
-
 	server := &http.Server{
 		Addr:         url,
 		Handler:      handler,
@@ -32,7 +30,6 @@ func NewRestServer(ctx context.Context,
 	}
 
 	return &RestServer{
-		url:        url,
 		log:        log,
 		ctx:        ctx,
 		httpServer: server,

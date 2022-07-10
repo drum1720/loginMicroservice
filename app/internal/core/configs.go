@@ -1,7 +1,6 @@
 package core
 
 import (
-	"errors"
 	"loginMicroservice/app/pkg/configs"
 )
 
@@ -10,20 +9,24 @@ type Cfg struct {
 	url   string
 }
 
-func InitCfg() (*Cfg, error) {
-	dsnPg := configs.GetEnvDefault("DSN", "")
-	address := configs.GetEnvDefault("URL", "")
-	if dsnPg == "" || address == "" {
-		return nil, errors.New("env config is empty")
-	}
-
-	return &Cfg{dsnPg: dsnPg, url: address}, nil
-}
-
 func (c Cfg) GetDsnPG() string {
 	return c.dsnPg
 }
 
 func (c Cfg) GetUrl() string {
 	return c.url
+}
+
+func InitCfg() (*Cfg, error) {
+	dsnPg, err := configs.GetEnvCfg("DSN")
+	if err != nil {
+		return nil, err
+	}
+
+	address, err := configs.GetEnvCfg("URL")
+	if err != nil {
+		return nil, err
+	}
+
+	return &Cfg{dsnPg: dsnPg, url: address}, nil
 }

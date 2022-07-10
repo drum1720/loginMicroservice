@@ -11,13 +11,14 @@ func PasswordEncryption(pass string) []byte {
 	if err != nil {
 		return nil
 	}
+
 	return hashedPassword
 }
 
 func PassCorrect(pass string, hashedPass string) bool {
-
 	if err := bcrypt.CompareHashAndPassword([]byte(hashedPass), []byte(salt+pass)); err != nil {
 		return false
 	}
+
 	return true
 }

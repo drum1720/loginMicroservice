@@ -13,7 +13,7 @@ import (
 	"os"
 )
 
-type loginServer struct {
+type LoginServer struct {
 	log              *logrus.Logger
 	ctx              context.Context
 	cfg              *core.Cfg
@@ -22,12 +22,12 @@ type loginServer struct {
 }
 
 // NewLoginServer ...
-func NewLoginServer() *loginServer {
-	return &loginServer{}
+func NewLoginServer() *LoginServer {
+	return &LoginServer{}
 }
 
 // Init ...
-func (ls *loginServer) Init() {
+func (ls *LoginServer) Init() {
 	ls.log = log.NewLogger()
 	ls.ctx = context.Background()
 
@@ -52,7 +52,7 @@ func (ls *loginServer) Init() {
 }
 
 // Run ...
-func (ls *loginServer) Run() {
+func (ls *LoginServer) Run() {
 	if err := ls.dbConnectionPool.Ping(ls.ctx); err != nil {
 		ls.log.WithField("can't connect to database err", err.Error()).Error()
 		os.Exit(1)
@@ -62,6 +62,11 @@ func (ls *loginServer) Run() {
 }
 
 // Stop ...
-func (ls *loginServer) Stop() {
+func (ls *LoginServer) Stop() {
+
+}
+
+// Restart ...
+func (ls *LoginServer) Restart() {
 
 }

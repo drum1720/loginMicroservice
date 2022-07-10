@@ -12,13 +12,13 @@ import (
 
 func (d DbConnectionPool) UserExist(ctx context.Context, user core.User) (bool, *response.Error) {
 	query := "SELECT login from auf WHERE login=$1"
-	res, err := d.DbPool.Exec(ctx, query, user.User)
+
+	execResult, err := d.dbPool.Exec(ctx, query, user.User)
 	if err != nil {
 		return false, response.NewError(err, http.StatusInternalServerError)
 	}
 
-	dd := string(res)
-	if dd != "SELECT 0" {
+	if string(execResult) != "SELECT 0" {
 		return true, response.NewError(errors.Errorf("user %s exist", user.User), http.StatusInternalServerError)
 	}
 
@@ -32,7 +32,7 @@ func (d DbConnectionPool) InsertUser(ctx context.Context, user core.User) *respo
 	}
 
 	query := "INSERT INTO auf (login, pass, last_visit) VALUES ($1,$2,$3)"
-	_, err := d.DbPool.Exec(ctx, query, user.User, pass, time.Now())
+	_, err := d.dbPool.Exec(ctx, query, user.User, pass, time.Now())
 	if err != nil {
 		return response.NewError(err, http.StatusInternalServerError)
 	}
@@ -44,12 +44,12 @@ func (d DbConnectionPool) UserValid(ctx context.Context, user *core.User) (bool,
 	requestPass := user.Password
 	query := "SELECT login,pass,last_visit from auf WHERE login=$1"
 
-	res := d.DbPool.QueryRow(ctx, query, user.User)
-	if res == nil {
+	queryRow := d.dbPool.QueryRow(ctx, query, user.User)
+	if queryRow == nil {
 		return false, response.NewError(errors.Errorf("user %s not exist", user.User), http.StatusBadRequest)
 	}
 
-	if err := res.Scan(&user.User, &user.Password, &user.LastVisit); err != nil {
+	if err := queryRow.Scan(&user.User, &user.Password, &user.LastVisit); err != nil {
 		return false, response.NewError(err, http.StatusInternalServerError)
 	}
 

@@ -6,7 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"loginMicroservice/app/internal/core"
 	"loginMicroservice/app/internal/datasource/posgresql"
-	"loginMicroservice/app/internal/log"
+	logrus2 "loginMicroservice/app/internal/logger/logrus"
 	"loginMicroservice/app/internal/transport/rest/server"
 	"loginMicroservice/app/internal/transport/rest/server/handlers"
 	"net/http"
@@ -28,7 +28,7 @@ func NewLoginServer() *LoginServer {
 
 // Init ...
 func (ls *LoginServer) Init() {
-	ls.log = log.NewLogger()
+	ls.log = logrus2.NewLogger()
 	ls.ctx = context.Background()
 
 	var err error

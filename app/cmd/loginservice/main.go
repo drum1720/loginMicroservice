@@ -1,14 +1,14 @@
 package main
 
 import (
-	"loginMicroservice/app/internal/application"
+	"loginMicroservice/app/internal/loginService"
 	"loginMicroservice/app/pkg/configs"
 )
 
 func main() {
 	configs.LoadEnvConfigs()
 
-	loginServer := application.NewLoginServer()
+	loginServer := loginService.NewLoginServer()
 	loginServer.Init()
 	loginServer.Run()
 

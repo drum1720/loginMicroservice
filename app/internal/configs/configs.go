@@ -1,23 +1,14 @@
 package configs
 
-import (
-	"loginMicroservice/app/pkg/configs"
-)
+import "loginMicroservice/app/pkg/configs"
 
 type Cfg struct {
 	dsnPg string
 	url   string
 }
 
-func (c Cfg) GetDsnPG() string {
-	return c.dsnPg
-}
-
-func (c Cfg) GetUrl() string {
-	return c.url
-}
-
-func InitCfg() (*Cfg, error) {
+//InitCfg ...
+func InitCfg() (Configure, error) {
 	dsnPg, err := configs.GetEnvCfg("DSN")
 	if err != nil {
 		return nil, err
@@ -29,4 +20,14 @@ func InitCfg() (*Cfg, error) {
 	}
 
 	return &Cfg{dsnPg: dsnPg, url: address}, nil
+}
+
+//GetDsnPG ...
+func (c Cfg) GetDsnPG() string {
+	return c.dsnPg
+}
+
+//GetUrl ...
+func (c Cfg) GetUrl() string {
+	return c.url
 }

@@ -4,22 +4,22 @@ import (
 	"context"
 	"fmt"
 	"loginMicroservice/app/internal/core"
-	"loginMicroservice/app/internal/datasource/posgresql"
+	"loginMicroservice/app/internal/datasource"
 	"loginMicroservice/app/internal/logger"
-	"loginMicroservice/app/internal/transport/rest/server/request"
-	"loginMicroservice/app/internal/transport/rest/server/response"
+	"loginMicroservice/app/internal/transport/rest/request"
+	"loginMicroservice/app/internal/transport/rest/response"
 	"net/http"
 )
 
 type AuthorizeHandler struct {
 	ctx context.Context
-	db  *posgresql.DbConnectionPool
+	db  datasource.DbSourcer
 	log logger.Logger
 }
 
 func NewAuthorizeHandler(
 	ctx context.Context,
-	db *posgresql.DbConnectionPool,
+	db datasource.DbSourcer,
 	log logger.Logger,
 ) *AuthorizeHandler {
 	return &AuthorizeHandler{

@@ -11,6 +11,4 @@ func main() {
 	loginServer := loginService.NewLoginServer()
 	loginServer.Init()
 	loginServer.Run()
-
-	//проверка на  что-то, и перезапуск, остановка
 }

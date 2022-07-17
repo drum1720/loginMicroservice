@@ -10,11 +10,7 @@ import (
 	"time"
 )
 
-type Server interface {
-	Run()
-}
-
-type RestServer struct {
+type Server struct {
 	ctx        context.Context
 	httpServer *http.Server
 	log        logger.Logger
@@ -25,7 +21,7 @@ func NewRestServer(
 	log logger.Logger,
 	url string,
 	dbSourcer datasource.DbSourcer,
-) *RestServer {
+) *Server {
 	router := mux.NewRouter()
 	router.Handle("/register", handlers2.NewRegistrationHandler(ctx, dbSourcer, log)).Methods(http.MethodPost)
 	router.Handle("/authorization", handlers2.NewAuthorizeHandler(ctx, dbSourcer, log)).Methods(http.MethodPost)
@@ -37,21 +33,21 @@ func NewRestServer(
 		ReadTimeout:  time.Second,
 	}
 
-	return &RestServer{
+	return &Server{
 		log:        log,
 		ctx:        ctx,
 		httpServer: server,
 	}
 }
 
-func (rs *RestServer) Run(cancel func()) {
+func (rs *Server) Run(cancel func()) {
 	if err := rs.httpServer.ListenAndServe(); err != nil {
 		rs.log.WithField("server error", err.Error()).Error()
 		cancel()
 	}
 }
 
-func (rs *RestServer) Shutdown() {
+func (rs *Server) Shutdown() {
 	if err := rs.httpServer.Shutdown(rs.ctx); err != nil {
 		rs.log.WithField("shutdown err", err)
 	}

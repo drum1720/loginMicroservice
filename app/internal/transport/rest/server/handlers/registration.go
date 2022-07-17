@@ -3,9 +3,9 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"loginMicroservice/app/internal/core"
 	"loginMicroservice/app/internal/datasource/posgresql"
+	"loginMicroservice/app/internal/logger"
 	"loginMicroservice/app/internal/transport/rest/server/request"
 	"loginMicroservice/app/internal/transport/rest/server/response"
 	"net/http"
@@ -14,13 +14,13 @@ import (
 type RegistrationHandler struct {
 	ctx context.Context
 	db  *posgresql.DbConnectionPool
-	log *logrus.Logger
+	log logger.Logger
 }
 
 func NewRegistrationHandler(
 	ctx context.Context,
 	db *posgresql.DbConnectionPool,
-	log *logrus.Logger,
+	log logger.Logger,
 ) *RegistrationHandler {
 	return &RegistrationHandler{
 		ctx: ctx,
@@ -29,26 +29,27 @@ func NewRegistrationHandler(
 	}
 }
 
-func (rh RegistrationHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h RegistrationHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var user core.User
 
 	if err := request.ParseData(r.Body, &user); err != nil {
-		rh.log.WithField("err", err.Error()).Warning("parse data err")
+		h.log.WithField("err", err.Error()).Error("parse data err")
 		http.Error(w, err.Error(), err.GetStatusCode())
 		return
 	}
 
-	if ok, err := rh.db.UserExist(rh.ctx, user); err != nil || ok {
-		rh.log.WithField("error", err.Error()).Info("user not created")
+	if ok, err := h.db.UserExist(h.ctx, user); err != nil || ok {
+		h.log.WithField("error", err.Error()).Info("user not created")
 		http.Error(w, fmt.Sprintf("user not created: err: %s", err.Error()), err.GetStatusCode())
 		return
 	}
 
-	if err := rh.db.InsertUser(rh.ctx, user); err != nil {
-		rh.log.WithField("err", err).Warning()
+	if err := h.db.InsertUser(h.ctx, user); err != nil {
+		h.log.WithField("err", err).Error()
 		http.Error(w, err.Error(), err.GetStatusCode())
 		return
 	}
 
 	response.NewRegistrationResponse(user).Write(w)
+	h.log.WithFields(logger.Fields{"user": user.User}).Info("register to service")
 }

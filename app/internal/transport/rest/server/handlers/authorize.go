@@ -3,9 +3,9 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"loginMicroservice/app/internal/core"
 	"loginMicroservice/app/internal/datasource/posgresql"
+	"loginMicroservice/app/internal/logger"
 	"loginMicroservice/app/internal/transport/rest/server/request"
 	"loginMicroservice/app/internal/transport/rest/server/response"
 	"net/http"
@@ -14,13 +14,13 @@ import (
 type AuthorizeHandler struct {
 	ctx context.Context
 	db  *posgresql.DbConnectionPool
-	log *logrus.Logger
+	log logger.Logger
 }
 
 func NewAuthorizeHandler(
 	ctx context.Context,
 	db *posgresql.DbConnectionPool,
-	log *logrus.Logger,
+	log logger.Logger,
 ) *AuthorizeHandler {
 	return &AuthorizeHandler{
 		ctx: ctx,
@@ -29,21 +29,22 @@ func NewAuthorizeHandler(
 	}
 }
 
-func (ah AuthorizeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h AuthorizeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var user core.User
 
 	if err := request.ParseData(r.Body, &user); err != nil {
-		ah.log.WithField("err", err.Error()).Warning("parse data err")
+		h.log.WithField("err", err.Error()).Error("parse data err")
 		http.Error(w, err.Error(), err.GetStatusCode())
 		return
 	}
 
-	if ok, err := ah.db.UserValid(ah.ctx, &user); err != nil || !ok {
-		ah.log.WithField("error", err.Error()).Info("user valid err")
+	if ok, err := h.db.UserValid(h.ctx, &user); err != nil || !ok {
+		h.log.WithField("error", err.Error()).Info("user valid err")
 		http.Error(w, fmt.Sprintf("user or pass not valid"), err.GetStatusCode())
 		return
 	}
 
 	response.NewAuthorizeResponse(user).Write(w)
+	h.log.WithFields(logger.Fields{"user": user.User}).Info("visit to service")
 
 }

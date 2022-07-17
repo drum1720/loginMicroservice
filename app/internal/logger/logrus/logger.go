@@ -9,13 +9,16 @@ import (
 	"strings"
 )
 
+const level = logrus.TraceLevel
+
 type Logger struct {
 	loger *logrus.Logger
 }
 
+// NewLogger create and set-up logger
 func NewLogger() *Logger {
 	logger := logrus.New()
-
+	logger.Level = level
 	logger.Out = os.Stdout
 	logger.SetReportCaller(true)
 
@@ -24,10 +27,10 @@ func NewLogger() *Logger {
 		FullTimestamp:          true,
 		DisableLevelTruncation: true,
 		CallerPrettyfier: func(f *runtime.Frame) (string, string) {
-			return "", fmt.Sprintf("%s:%d", formatFilePath(f.File), f.Line)
+			_, file, line, _ := runtime.Caller(8)
+			return "", fmt.Sprintf("%s:%d", getFileName(file), line)
 		},
 	}
-
 	logger.SetFormatter(formatter)
 
 	return &Logger{
@@ -35,11 +38,16 @@ func NewLogger() *Logger {
 	}
 }
 
-func formatFilePath(path string) string {
-	arr := strings.Split(path, "/")
-	return arr[len(arr)-1]
+func getFileName(path string) string {
+	splitPath := strings.Split(path, "/")
+	if len(splitPath) < 1 {
+		return ""
+	}
+
+	return splitPath[len(splitPath)-1]
 }
 
+// WithField ...
 func (l *Logger) WithField(key string, value interface{}) logger.LoggerWithField {
 	return &loggerWithFields{
 		loger:  l.loger,
@@ -47,6 +55,7 @@ func (l *Logger) WithField(key string, value interface{}) logger.LoggerWithField
 	}
 }
 
+// WithFields ...
 func (l *Logger) WithFields(fields logger.Fields) logger.LoggerWithField {
 	return &loggerWithFields{
 		loger:  l.loger,
@@ -54,14 +63,17 @@ func (l *Logger) WithFields(fields logger.Fields) logger.LoggerWithField {
 	}
 }
 
+// Debug ...
 func (l *Logger) Debug(args ...interface{}) {
 	l.loger.Debug(args)
 }
 
+// Info ...
 func (l *Logger) Info(args ...interface{}) {
 	l.loger.Info(args)
 }
 
+// Error ...
 func (l *Logger) Error(args ...interface{}) {
 	l.loger.Error(args)
 }

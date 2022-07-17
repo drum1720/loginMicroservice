@@ -3,10 +3,10 @@ package loginService
 import (
 	"context"
 	"github.com/gorilla/mux"
-	"github.com/sirupsen/logrus"
-	"loginMicroservice/app/internal/core"
+	"loginMicroservice/app/internal/configs"
 	"loginMicroservice/app/internal/datasource/posgresql"
-	logrus2 "loginMicroservice/app/internal/logger/logrus"
+	"loginMicroservice/app/internal/logger"
+	"loginMicroservice/app/internal/logger/logrus"
 	"loginMicroservice/app/internal/transport/rest/server"
 	"loginMicroservice/app/internal/transport/rest/server/handlers"
 	"net/http"
@@ -14,9 +14,9 @@ import (
 )
 
 type LoginServer struct {
-	log              *logrus.Logger
+	log              logger.Logger
 	ctx              context.Context
-	cfg              *core.Cfg
+	cfg              *configs.Cfg
 	dbConnectionPool *posgresql.DbConnectionPool
 	restServer       *server.RestServer
 }
@@ -28,11 +28,11 @@ func NewLoginServer() *LoginServer {
 
 // Init ...
 func (ls *LoginServer) Init() {
-	ls.log = logrus2.NewLogger()
+	ls.log = logrus.NewLogger()
 	ls.ctx = context.Background()
 
 	var err error
-	ls.cfg, err = core.InitCfg()
+	ls.cfg, err = configs.InitCfg()
 	if err != nil {
 		ls.log.WithField("config err", err).Error()
 		os.Exit(1)

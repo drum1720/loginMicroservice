@@ -39,6 +39,6 @@ func (c Cfg) GetUrl() string {
 }
 
 //GetJWT ...
-func (c Cfg) GetJWT() string {
+func (c Cfg) GetKeyJWT() string {
 	return c.jwt
 }

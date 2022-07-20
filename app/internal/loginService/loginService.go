@@ -9,6 +9,7 @@ import (
 	"loginMicroservice/app/internal/logger/logrus"
 	"loginMicroservice/app/internal/transport"
 	"loginMicroservice/app/internal/transport/rest"
+	"net/http"
 	"os"
 	"time"
 )
@@ -18,6 +19,7 @@ type LoginServer struct {
 	log        logger.Logger
 	cfg        configs.Configure
 	dbSourcer  datasource.DbSourcer
+	router     http.Handler
 	restServer transport.Server
 	cancel     func()
 }
@@ -44,8 +46,8 @@ func (ls *LoginServer) Init() {
 		ls.log.WithField("can't connect to database err", err.Error()).Error()
 		os.Exit(1)
 	}
-
-	ls.restServer = rest.NewRestServer(ls.ctx, ls.log, ls.cfg, ls.dbSourcer)
+	ls.router = rest.InitRouter(ls.ctx, ls.log, ls.cfg, ls.dbSourcer)
+	ls.restServer = rest.NewRestServer(ls.ctx, ls.log, ls.cfg, ls.router)
 }
 
 // Run ...

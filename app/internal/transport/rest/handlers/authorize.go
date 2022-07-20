@@ -48,6 +48,6 @@ func (h AuthorizeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.NewAuthorizeResponse(user.User, h.cfg.GetJWT()).Write(w)
+	response.NewAuthorizeResponse(user.User, h.cfg.GetKeyJWT()).Write(w)
 	h.log.WithFields(logger.Fields{"user": user.User}).Info("visit to service")
 }

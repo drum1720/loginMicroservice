@@ -11,5 +11,6 @@ type (
 		UserExist(ctx context.Context, user string) (bool, *error2.Error)
 		InsertUser(ctx context.Context, user, pass string) *error2.Error
 		UserValid(ctx context.Context, user, pass string) (bool, *error2.Error)
+		ClearTable(ctx context.Context) *error2.Error
 	}
 )

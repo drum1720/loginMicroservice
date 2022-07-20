@@ -23,6 +23,6 @@ func (rr RegistrationResponse) Write(w http.ResponseWriter) {
 	rr.DataTime = time.Now()
 
 	w.WriteHeader(rr.StatusCode)
-	data, _ := json.Marshal(&rr) //косяк с маршалом!!!!
+	data, _ := json.Marshal(&rr)
 	w.Write(data)
 }

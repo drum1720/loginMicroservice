@@ -64,3 +64,12 @@ func (d DbConnectionPool) UserValid(ctx context.Context, user, pass string) (boo
 
 	return true, nil
 }
+
+func (d DbConnectionPool) ClearTable(ctx context.Context) *error2.Error {
+	query := "DELETE FROM auf"
+	if _, err := d.dbPool.Exec(ctx, query); err != nil {
+		return error2.NewError(err, http.StatusInternalServerError)
+	}
+
+	return nil
+}

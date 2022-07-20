@@ -1,15 +1,15 @@
-package request
+package common
 
 import (
 	"encoding/json"
 	"github.com/pkg/errors"
 	"io"
-	"loginMicroservice/app/internal/core"
 	error2 "loginMicroservice/app/internal/transport/rest/error"
+	"loginMicroservice/app/internal/transport/rest/handlers/request"
 	"net/http"
 )
 
-func ParseData(body io.ReadCloser, essence core.Validator) *error2.Error {
+func ParseData(body io.ReadCloser, essence request.Validator) *error2.Error {
 	buffer, err := io.ReadAll(body)
 	if err != nil {
 		return error2.NewError(err, http.StatusInternalServerError)

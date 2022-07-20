@@ -50,7 +50,7 @@ func getFileName(path string) string {
 // WithField ...
 func (l *Logger) WithField(key string, value interface{}) logger.LoggerWithField {
 	return &loggerWithFields{
-		loger:  l.loger,
+		logger: l.loger,
 		fields: logger.Fields{key: value},
 	}
 }
@@ -58,7 +58,7 @@ func (l *Logger) WithField(key string, value interface{}) logger.LoggerWithField
 // WithFields ...
 func (l *Logger) WithFields(fields logger.Fields) logger.LoggerWithField {
 	return &loggerWithFields{
-		loger:  l.loger,
+		logger: l.loger,
 		fields: fields,
 	}
 }

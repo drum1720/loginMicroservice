@@ -45,7 +45,7 @@ func (ls *LoginServer) Init() {
 		os.Exit(1)
 	}
 
-	ls.restServer = rest.NewRestServer(ls.ctx, ls.log, ls.cfg.GetUrl(), ls.dbSourcer)
+	ls.restServer = rest.NewRestServer(ls.ctx, ls.log, ls.cfg, ls.dbSourcer)
 }
 
 // Run ...

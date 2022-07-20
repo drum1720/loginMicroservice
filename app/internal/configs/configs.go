@@ -5,6 +5,7 @@ import "loginMicroservice/app/pkg/configs"
 type Cfg struct {
 	dsnPg string
 	url   string
+	jwt   string
 }
 
 //InitCfg ...
@@ -19,7 +20,12 @@ func InitCfg() (Configure, error) {
 		return nil, err
 	}
 
-	return &Cfg{dsnPg: dsnPg, url: address}, nil
+	jwt, err := configs.GetEnvCfg("SUPERSECRETJWT")
+	if err != nil {
+		return nil, err
+	}
+
+	return &Cfg{dsnPg: dsnPg, url: address, jwt: jwt}, nil
 }
 
 //GetDsnPG ...
@@ -30,4 +36,9 @@ func (c Cfg) GetDsnPG() string {
 //GetUrl ...
 func (c Cfg) GetUrl() string {
 	return c.url
+}
+
+//GetJWT ...
+func (c Cfg) GetJWT() string {
+	return c.jwt
 }

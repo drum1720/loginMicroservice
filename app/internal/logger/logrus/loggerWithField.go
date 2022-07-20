@@ -6,18 +6,18 @@ import (
 )
 
 type loggerWithFields struct {
-	loger  *logrus.Logger
+	logger *logrus.Logger
 	fields logger.Fields
 }
 
 func (l *loggerWithFields) Debug(args ...interface{}) {
-	l.loger.WithFields(logrus.Fields(l.fields)).Debug(args)
+	l.logger.WithFields(logrus.Fields(l.fields)).Debug(args)
 }
 
 func (l *loggerWithFields) Info(args ...interface{}) {
-	l.loger.WithFields(logrus.Fields(l.fields)).Info(args)
+	l.logger.WithFields(logrus.Fields(l.fields)).Info(args)
 }
 
 func (l *loggerWithFields) Error(args ...interface{}) {
-	l.loger.WithFields(logrus.Fields(l.fields)).Error(args)
+	l.logger.WithFields(logrus.Fields(l.fields)).Error(args)
 }

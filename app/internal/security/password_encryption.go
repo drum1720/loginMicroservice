@@ -4,10 +4,13 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const salt = "shla_kto-to_kudato_i_sossala~0~"
+const (
+	salt = "shla_kto-to_kudato_i_sossala~0~"
+	cost = 6
+)
 
-func PasswordEncryption(pass string) []byte {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(salt+pass), bcrypt.DefaultCost)
+func PassEncryption(pass string) []byte {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(salt+pass), cost)
 	if err != nil {
 		return nil
 	}
